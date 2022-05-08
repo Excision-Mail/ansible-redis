@@ -10,8 +10,8 @@
     enabled: true
 
 - name: generate redis config
-  copy:
-    src: redis.conf
+  template:
+    src: redis.conf.j2
     dest: /etc/redis/redis.conf
     owner: root
     group: wheel

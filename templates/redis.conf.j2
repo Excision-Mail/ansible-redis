@@ -72,7 +72,7 @@
 # IF YOU ARE SURE YOU WANT YOUR INSTANCE TO LISTEN TO ALL THE INTERFACES
 # JUST COMMENT OUT THE FOLLOWING LINE.
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-bind 127.0.0.1 -::1
+bind 127.0.0.1 -::1 {% for addr in redis_addrs %}-{{ addr }} {% endfor %}
 
 # Protected mode is a layer of security protection, in order to avoid that
 # Redis instances left open on the internet are accessed and exploited.
@@ -91,7 +91,7 @@ bind 127.0.0.1 -::1
 # you are sure you want clients from other hosts to connect to Redis
 # even if no authentication is configured, nor a specific set of interfaces
 # are explicitly listed using the "bind" directive.
-protected-mode yes
+protected-mode {{ redis_protected }}
 
 # Accept connections on the specified port, default is 6379 (IANA #815344).
 # If port 0 is specified Redis will not listen on a TCP socket.
@@ -112,8 +112,8 @@ tcp-backlog 511
 # incoming connections. There is no default, so Redis will not listen
 # on a unix socket when not specified.
 #
-unixsocket /var/www/tmp/redis.sock
-unixsocketperm 777
+unixsocket {{ redis_socket_path }}
+unixsocketperm {{ redis_socket_perm }}
 
 # Close the connection after a client is idle for N seconds (0 to disable)
 timeout 0
@@ -397,7 +397,7 @@ proc-title-template "{title} {listen-addr} {server-mode}"
 # and persistence, you may want to disable this feature so that Redis will
 # continue to work as usual even if there are problems with disk,
 # permissions, and so forth.
-#stop-writes-on-bgsave-error yes
+stop-writes-on-bgsave-error no
 
 # Compress string objects using LZF when dump .rdb databases?
 # By default compression is enabled as it's almost always a win.
@@ -992,8 +992,7 @@ maxclients 96
 # limit for maxmemory so that there is some free RAM on the system for replica
 # output buffers (but this is not needed if the policy is 'noeviction').
 #
-# 2GB <bytes>
-maxmemory 2097152
+maxmemory {{ redis_maxmem }}
 
 # MAXMEMORY POLICY: how Redis will select what to remove when maxmemory
 # is reached. You can select one from the following behaviors:
@@ -1022,7 +1021,7 @@ maxmemory 2097152
 #
 # The default is:
 #
-maxmemory-policy allkeys-lru
+maxmemory-policy {{ redis_maxmem_policy }}
 
 # LRU, LFU and minimal TTL algorithms are not precise algorithms but approximated
 # algorithms (in order to save memory), so you can tune it for speed or
