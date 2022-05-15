@@ -8,6 +8,9 @@ redis_maxmem_policy: "allkeys-lfu"
 
 redis_addrs: []
 
+# TCP Port to listen on. Set to 0 to disable listening on a TCP socket.
+redis_port: 6379
+
 redis_protected: "no"
 
 redis_socket_path: "/var/run/redis/redis.sock"
