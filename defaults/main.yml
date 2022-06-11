@@ -13,5 +13,16 @@ redis_port: 6379
 
 redis_protected: "no"
 
-redis_socket_path: "/var/run/redis/redis.sock"
-redis_socket_perm: "770"
+redis_socket_dir: '/var/www/var/run/redis'
+redis_socket_path: "{{ redis_socket_dir }}/redis.sock"
+redis_socket_perm: "777"
+
+redis_directories:
+  - path: '{{ redis_socket_dir | regex_replace("^(.*)/.*$", "\1") }}'
+    user: root
+    group: wheel
+    mode: '0755'
+  - path: '/var/www/var/run/redis'
+    user: _redis
+    group: _redis
+    mode: '0755'
